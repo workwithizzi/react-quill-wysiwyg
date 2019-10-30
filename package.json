@@ -11,5 +11,8 @@
 		"next": "9.1.2",
 		"react": "16.11.0",
 		"react-dom": "16.11.0"
+	},
+	"devDependencies": {
+		"@workwithizzi/eslint-config-react": "^0.0.2"
 	}
 }
