@@ -15,6 +15,17 @@ export default class QuillEditor extends React.Component {
 		this.handleChange = this.handleChange.bind(this);
 	}
 
+	/* Uncomment this to see DELTAS object
+
+	handleChange(content, delta, source, editor) {
+		console.log(editor.getHTML());
+		console.log(editor.getText());
+		console.log(editor.getContents());
+		this.setState({ text: editor.getHTML() });
+	}
+
+	*/
+
 	handleChange(value) {
 		this.setState({ text: value });
 	}
