@@ -2,46 +2,16 @@ import React from "react";
 import Head from "next/head";
 import ReactQuill from "react-quill";
 
-// import "quill/dist/quill.snow.css";
-
-// import Quill from "quill/core";
-// import Toolbar from "quill/modules/toolbar";
-// import SnowTheme from "quill/themes/snow";
-
 export default class QuillEditor extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { text: "" }; // You can also pass a Quill Delta here
+		this.state = { html: "", deltas: "" }; // You can also pass a Quill Delta here
 		this.handleChange = this.handleChange.bind(this);
 	}
 
-	/* Uncomment this to see DELTAS object
-
 	handleChange(content, delta, source, editor) {
-		console.log(editor.getHTML());
-		console.log(editor.getText());
-		console.log(editor.getContents());
-		this.setState({ text: editor.getHTML() });
+		this.setState({ html: editor.getHTML(), deltas: editor.getContents() });
 	}
-
-	*/
-
-	handleChange(value) {
-		this.setState({ text: value });
-	}
-
-	// componentDidMount() {
-
-	// 	Quill.register({
-	// 		"themes/snow": SnowTheme,
-	// 		"modules/toolbar": Toolbar,
-	// 	});
-
-	// 	new Quill("#editor", {
-	// 		theme: "snow",
-	// 		placeholder: "Write something awesome...",
-	// 	});
-	// }
 
 	render() {
 		return (
@@ -51,18 +21,21 @@ export default class QuillEditor extends React.Component {
 					<title>Quill Test</title>
 				</Head>
 				<div>
-					<ReactQuill value={this.state.text} onChange={this.handleChange} />
+					<ReactQuill value={this.state.html} onChange={this.handleChange} />
 
-					<pre style={{background:"#333", color:"white", margin:"30px 5px", padding:"10px"}}>
-						{JSON.stringify(this.state, null, 2)}
-					</pre>
+					<div>
+						<p>HTML:</p>
+						<pre style={{background:"#333", color:"white", margin:"30px 5px", padding:"10px"}}>
+							{JSON.stringify(this.state.html, null, 2)}
+						</pre>
+					</div>
 
-					{/* <div id="QuillEditor-container">
-						<div id="editor">
-							<p>Hello World!</p>
-							<p>Some initial <strong>bold</strong> text</p>
-						</div>
-					</div> */}
+					<div>
+						<p>Deltas:</p>
+						<pre style={{background:"#333", color:"white", margin:"30px 5px", padding:"10px"}}>
+							{JSON.stringify(this.state.deltas, null, 2)}
+						</pre>
+					</div>
 				</div>
 			</>
 		);
