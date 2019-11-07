@@ -7,7 +7,7 @@ const EditorWithNoSSR = dynamic(
 
 function Home() {
 	return (
-		<EditorWithNoSSR />
+		<EditorWithNoSSR placeholder={"Write something ..."}/>
 	);
 }
 
