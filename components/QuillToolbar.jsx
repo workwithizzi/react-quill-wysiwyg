@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import { Heart } from "./buttons/Heart";
 import Background from "./buttons/Background";
 
@@ -36,6 +38,14 @@ const QuillToolbar = (props) => {
 			</button>
 		</div>
 	);
+};
+
+QuillToolbar.defaultProps = {
+	background: [],
+};
+
+QuillToolbar.propTypes = {
+	background: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default QuillToolbar;
