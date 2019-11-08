@@ -1,13 +1,8 @@
-import dynamic from "next/dynamic";
-
-const EditorWithNoSSR = dynamic(
-	() => import("../components/QuillEditor"),
-	{ ssr: false }
-);
+import Quill from "./../components/Quill";
 
 function Home() {
 	return (
-		<EditorWithNoSSR
+		<Quill
 			placeholder="Write something ..."
 			background={["red", "green", "blue"]}
 			bold
