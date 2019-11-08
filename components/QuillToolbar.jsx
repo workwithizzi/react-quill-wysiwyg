@@ -2,6 +2,9 @@ import PropTypes from "prop-types";
 
 import { Heart } from "./buttons/Heart";
 import Background from "./buttons/Background";
+import Color from "./buttons/Color";
+import Font from "./buttons/Font";
+import Size from "./buttons/Size";
 
 const QuillToolbar = (props) => {
 	return (
@@ -20,26 +23,42 @@ const QuillToolbar = (props) => {
 				props.bold ? <button className="ql-bold" /> : null
 			}
 
-			{/*
-			<select className="ql-color" />
-			<select className="ql-font">
-				<option defaultValue="arial">Arial</option>
-				<option value="sans-serif">Sans Serif</option>
-				<option value="comic-sans">Comic Sans</option>
-				<option value="courier-new">Courier New</option>
-				<option value="georgia">Georgia</option>
-				<option value="helvetica">Helvetica</option>
-				<option value="lucida">Lucida</option>
-			</select>
-			<select className="ql-size">
-				<option value="extra-small">Size 1</option>
-				<option value="small">Size 2</option>
-				<option defaultValue="medium">Size 3</option>
-				<option value="large">Size 4</option>
-			</select>
-			<select className="ql-align" />
-			<button className="ql-clean" />
-			*/}
+			{/* Color format */}
+			{
+				props.color ? 
+					props.color.length === 0 ?
+						<select className="ql-color" /> :
+						<Color color={props.color} />
+					: null
+			}
+
+			{/* Font format */}
+			{
+				props.font ?
+					<Font font={props.font} />
+					: null
+			}
+
+			{/* Size format */}
+			{
+				props.size ?
+					<Size size={props.size} />
+					: null
+			}
+
+			{/* Align format */}
+			{
+				props.align ?
+					<select className="ql-align" />
+					: null
+			}
+
+			{
+				props.clean ? 
+					<button className="ql-clean" />
+					: null
+			}
+
 			<button className="ql-insertHeart">
 				<Heart />
 			</button> 
@@ -50,11 +69,21 @@ const QuillToolbar = (props) => {
 QuillToolbar.defaultProps = {
 	background: null,
 	bold: false,
+	color: null,
+	font: null,
+	size: null,
+	align: false,
+	clean: false,
 };
 
 QuillToolbar.propTypes = {
 	background: PropTypes.arrayOf(PropTypes.string),
 	bold: PropTypes.bool,
+	color: PropTypes.arrayOf(PropTypes.string),
+	font: PropTypes.arrayOf(PropTypes.string),
+	size: PropTypes.arrayOf(PropTypes.string),
+	align: PropTypes.bool,
+	clean: PropTypes.bool,
 };
 
 export default QuillToolbar;

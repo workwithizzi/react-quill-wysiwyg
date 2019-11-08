@@ -12,28 +12,46 @@ import QuillToolbar from "./QuillToolbar";
 import QuillModules from "./QuillModules";
 
 let QuillFormats = [];
+
+function registerFonts(props) {
+	const Font = Quill.import("formats/font");
+	const fonts = [];
+	props.font.map(font => (
+		fonts.push(font)
+	));
+	Font.whitelist = fonts;
+	Quill.register(Font, true);
+}
+
+function registerSizes(props) {
+	const Size = Quill.import("formats/size");
+	const sizes = [];
+	props.size.map(size => (
+		sizes.push(size)
+	));
+	Size.whitelist = sizes;
+	Quill.register(Size, true);
+}
+
 class QuillEditor extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = { html: "", deltas: "", formats: [] };
+		this.state = { html: "", deltas: "" };
 		this.handleChange = this.handleChange.bind(this);
 		this.mapPropsToFormats = this.mapPropsToFormats.bind(this);
 		// Add fonts to whitelist and register them
-		// const Font = Quill.import("formats/font");
-		// Font.whitelist = [
-		// 	"arial",
-		// 	"comic-sans",
-		// 	"courier-new",
-		// 	"georgia",
-		// 	"helvetica",
-		// 	"lucida",
-		// ];
-		// Quill.register(Font, true);
+		{
+			props.font ? (
+				registerFonts(props)
+			) : null;
+		}
 
-		// // Add sizes to whitelist and register them
-		// const Size = Quill.import("formats/size");
-		// Size.whitelist = ["extra-small", "small", "medium", "large"];
-		// Quill.register(Size, true);
+		// Add sizes to whitelist and register them
+		{
+			props.size ? (
+				registerSizes(props)
+			) : null;
+		}
 	}
 
 	componentDidUpdate() {
@@ -64,9 +82,17 @@ class QuillEditor extends React.Component {
 					<link rel="stylesheet" href="//cdn.quilljs.com/1.2.6/quill.snow.css" />
 					<title>Quill Test</title>
 				</Head>
-				<div>
+				<>
 					<div className="text-editor">
-						<QuillToolbar background={this.props.background} bold={this.props.bold} />
+						<QuillToolbar
+							background={this.props.background}
+							bold={this.props.bold}
+							color={this.props.color}
+							font={this.props.font}
+							size={this.props.size}
+							align={this.props.align}
+							clean={this.props.clean}
+						/>
 						<ReactQuill
 							value={this.state.html}
 							onChange={this.handleChange}
@@ -75,7 +101,7 @@ class QuillEditor extends React.Component {
 							formats={QuillFormats}
 						/>
 					</div>
-				</div>
+				</>
 
 				<div>
 					<p>HTML:</p>
@@ -99,12 +125,21 @@ QuillEditor.defaultProps = {
 	placeholder: "Write something ...",
 	background: null,
 	bold: false,
+	color: null,
+	font: null,
+	size: null,
+	align: false,
+	clean: false,
 };
 
 QuillEditor.propTypes = {
 	placeholder: PropTypes.string,
 	background: PropTypes.arrayOf(PropTypes.string),
 	bold: PropTypes.bool,
+	font: PropTypes.arrayOf(PropTypes.string),
+	size: PropTypes.arrayOf(PropTypes.string),
+	align: PropTypes.bool,
+	clean: PropTypes.bool,
 };
 
 export default QuillEditor;
