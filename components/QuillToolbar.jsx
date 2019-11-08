@@ -9,12 +9,18 @@ const QuillToolbar = (props) => {
 
 			{/* Background format */}
 			{
-				props.background.length === 0 ?
-					<select className="ql-background" /> :
-					<Background background={props.background} />
+				props.background ? 
+					props.background.length === 0 ?
+						<select className="ql-background" /> :
+						<Background background={props.background} /> : null
 			}
 
-			<button className="ql-bold" />
+			{/* Bold format */}
+			{
+				props.bold ? <button className="ql-bold" /> : null
+			}
+
+			{/*
 			<select className="ql-color" />
 			<select className="ql-font">
 				<option defaultValue="arial">Arial</option>
@@ -33,19 +39,22 @@ const QuillToolbar = (props) => {
 			</select>
 			<select className="ql-align" />
 			<button className="ql-clean" />
+			*/}
 			<button className="ql-insertHeart">
 				<Heart />
-			</button>
+			</button> 
 		</div>
 	);
 };
 
 QuillToolbar.defaultProps = {
-	background: [],
+	background: null,
+	bold: false,
 };
 
 QuillToolbar.propTypes = {
 	background: PropTypes.arrayOf(PropTypes.string),
+	bold: PropTypes.bool,
 };
 
 export default QuillToolbar;

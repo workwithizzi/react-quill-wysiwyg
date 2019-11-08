@@ -9,7 +9,8 @@ function Home() {
 	return (
 		<EditorWithNoSSR
 			placeholder="Write something ..."
-			background={["red", "blue"]}
+			background={["red", "green", "blue"]}
+			bold
 		/>
 	);
 }
