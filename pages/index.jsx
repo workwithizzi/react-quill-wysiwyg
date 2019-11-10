@@ -1,9 +1,18 @@
 import React from "react";
+import Head from "next/head";
 import { SlateEditor } from "../components/slate/SlateEditor";
+
+
 
 function Home() {
 	return (
-		<SlateEditor />
+		<>
+			<Head>
+				<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+			</Head>
+
+			<SlateEditor />
+		</>
 	);
 }
 

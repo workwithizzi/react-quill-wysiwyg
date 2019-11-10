@@ -1,196 +1,261 @@
 import React from "react";
 import { Editor } from "slate-react";
 import { Value } from "slate";
-import Icon from "react-icons-kit";
-import { bold } from "react-icons-kit/feather/bold";
-import { italic } from "react-icons-kit/feather/italic";
-import { code } from "react-icons-kit/feather/code";
-import { list } from "react-icons-kit/feather/list";
-import { underline } from "react-icons-kit/feather/underline";
+import { isKeyHotkey } from 'is-hotkey'
 
-import { MarkBold, MarkItalic } from "./marks";
-import { FormatToolbar } from "./FormatToolbar";
-
+import { Button, Toolbar } from './slatetools'
 
 
 // Create our initial value...
 const initialValue = Value.fromJSON({
-	document: {
-		nodes: [
-			{
-				object: "block",
-				type: "paragraph",
-				nodes: [
-					{
-						object: "text",
-						text: "A line of placeholder text in a paragraph.",
-					},
-				],
-			},
-		],
-	},
-});
+  document: {
+    nodes: [
+      {
+        object: 'block',
+        type: 'paragraph',
+        nodes: [
+          {
+            object: 'text',
+            text: 'A line of placeholder text in a paragraph.',
+          },
+        ],
+      },
+    ],
+  },
+})
+
+// Define the default node type.
+const DEFAULT_NODE = 'paragraph'
+
+// Define hotkey matchers.
+const isBoldHotkey = isKeyHotkey('mod+b')
+const isItalicHotkey = isKeyHotkey('mod+i')
+const isUnderlinedHotkey = isKeyHotkey('mod+u')
+const isCodeHotkey = isKeyHotkey('mod+`')
 
 
-const ToolTip = props => (
-	<button style={{"border":"0"}}
-		// onPointerDown={(e) => this.onMarkClick(e, props.type)}
-		className="tooltip-icon-button"
-	>
-		<Icon icon={bold} />
-	</button>
-);
-
-
-
+// The rich text example.
 class SlateEditor extends React.Component {
-	// Set the initial value when the app is first constructed.
-	state = {
-		value: initialValue,
-	}
-	// On change, update the app's React state with the new editor value.
-	onChange = ({ value }) => {
-		this.setState({ value });
-	}
+  // Deserialize the initial editor value.
+  state = {
+    value: Value.fromJSON(initialValue),
+  }
 
-	onKeyDown = (e, change) => {
-		console.log(e.key);
-		// Make sure all commands start with user pressing ctrl
-		if (!e.ctrlKey) { return; }
-		e.preventDefault();
+  // Check if the current selection has a mark with `type` in it.
+  hasMark = type => {
+    const { value } = this.state
+    return value.activeMarks.some(mark => mark.type === type)
+  }
 
-		// Decide what to do based on the key code
-		switch (e.key) {
-		// When "b" is pressed, add a "bold" mark to the text.
-		case "b": {
-			change.toggleMark("bold");
-			return true;
-		}
-		case "i": {
-			change.toggleMark("italic");
-			return true;
-		}
-		case "c": {
-			change.toggleMark("code");
-			return true;
-		}
-		case "l": {
-			change.toggleMark("list");
-			return true;
-		}
-		case "u": {
-			change.toggleMark("underline");
-			return true;
-		}
-		default: {
-			return;
-		}
-		}
-	}
+  // Check if the any of the currently selected blocks are of `type`.
+  hasBlock = type => {
+    const { value } = this.state
+    return value.blocks.some(node => node.type === type)
+  }
 
-		renderMark = props => {
-			switch (props.mark.type) {
-			case "bold":
-				return <MarkBold {...props} />;
-			case "italic":
-				return <MarkItalic {...props} />;
-			case "code":
-				return <code {...props.attributes}>{props.children}</code>;
-			case "list":
-				return (
-					<ul {...props.attributes}>
-						<li>{props.children}</li>
-					</ul>
-				);
-			case "underline":
-				return <u {...props.attributes}>{props.children}</u>;
-			}
-		};
+  // Store a reference to the `editor`.
+  ref = editor => {
+    this.editor = editor
+  }
 
-	// Reference the editor for "onMarkClick"
-	ref = editor => { this.editor = editor; }
-
-	onMarkClick = (e, type) => {
-		// Disable default browser behavior
-		e.preventDefault();
-		// Update the selected text
-		this.editor.toggleMark(type);
-
-	}
-
-
-	render() {
-		return (
+  // Render
+  render() {
+    return (
 			<>
-				<div className="editor-wrapper">
-					<FormatToolbar>
-						{/* <button
-							onPointerDown={(e) => this.onMarkClick(e, "bold")}
-							className="tooltip-icon-button"
-						>
-							<Icon icon={bold} />
-						</button> */}
-						<ToolTip type="bold" />
-						<button
-							onPointerDown={(e) => this.onMarkClick(e, "italic")}
-							className="tooltip-icon-button"
-						>
-							<Icon icon={italic} />
-						</button>
-						<button
-							onPointerDown={(e) => this.onMarkClick(e, "code")}
-							className="tooltip-icon-button"
-						>
-							<Icon icon={code} />
-						</button>
-						<button
-							onPointerDown={(e) => this.onMarkClick(e, "list")}
-							className="tooltip-icon-button"
-						>
-							<Icon icon={list} />
-						</button>
-						<button
-							onPointerDown={(e) => this.onMarkClick(e, "underline")}
-							className="tooltip-icon-button"
-						>
-							<Icon icon={underline} />
-						</button>
-					</FormatToolbar>
-					<Editor
-						value={this.state.value}
-						onChange={this.onChange}
-						onKeyDown={this.onKeyDown}
-						renderMark={this.renderMark}
-						ref={this.ref}
-					/>
-				</div>
-
-				{/* For Testing Purposes */}
-				<div>
+      <div style={{
+				maxWidth: "800px",
+				margin: "40px auto",
+				padding: "20px",
+				background: "white",
+				color: "#333",
+				boxShadow: "0px 16px 24px 0px #A9A9A9"
+			}}>
+        <Toolbar>
+          {this.renderMarkButton('bold', 'format_bold')}
+          {this.renderMarkButton('italic', 'format_italic')}
+          {this.renderMarkButton('underlined', 'format_underlined')}
+          {this.renderMarkButton('code', 'code')}
+          {this.renderBlockButton('heading-one', 'looks_one')}
+          {this.renderBlockButton('heading-two', 'looks_two')}
+          {this.renderBlockButton('block-quote', 'format_quote')}
+          {this.renderBlockButton('numbered-list', 'format_list_numbered')}
+          {this.renderBlockButton('bulleted-list', 'format_list_bulleted')}
+        </Toolbar>
+        <Editor
+          spellCheck
+          autoFocus
+          placeholder="Enter some rich text..."
+          ref={this.ref}
+          value={this.state.value}
+          onChange={this.onChange}
+          onKeyDown={this.onKeyDown}
+          renderBlock={this.renderBlock}
+					renderMark={this.renderMark}
+					style={{border:"1px solid grey", minHeight:"60px"}}
+        />
+      </div>
+			<div>
 					<p>State:</p>
 					<pre style={{background:"#333", color:"white", margin:"30px 5px", padding:"10px"}}>
 						{JSON.stringify(this.state, null, 2)}
 					</pre>
 				</div>
-
-				<style jsx>{`
-					.tooltip-icon-button {
-						border: 0;
-					}
-					.editor-wrapper {
-						background: white;
-						font-family: sans-serif;
-						color: #333;
-						max-width: 740px;
-						box-shadow: 0px 16px 24px 0px;
-						padding: 20px 40px;
-						margin: 65px auto 45px;
-						border-radius: 4.5px;
-					}
-				`}</style>
 			</>
-		);
-	}
+    )
+  }
+
+  // Render a mark-toggling toolbar button.
+  renderMarkButton = (type, icon) => {
+    const isActive = this.hasMark(type)
+
+    return (
+      <Button
+        active={isActive}
+        onMouseDown={event => this.onClickMark(event, type)}
+      >
+				{icon}
+      </Button>
+    )
+  }
+
+  // Render a block-toggling toolbar button.
+  renderBlockButton = (type, icon) => {
+    let isActive = this.hasBlock(type)
+
+    if (['numbered-list', 'bulleted-list'].includes(type)) {
+      const { value: { document, blocks } } = this.state
+
+      if (blocks.size > 0) {
+        const parent = document.getParent(blocks.first().key)
+        isActive = this.hasBlock('list-item') && parent && parent.type === type
+      }
+    }
+
+    return (
+      <Button
+        active={isActive}
+        onMouseDown={event => this.onClickBlock(event, type)}
+      >
+				{icon}
+      </Button>
+    )
+  }
+
+  // Render a Slate block
+  renderBlock = (props, editor, next) => {
+    const { attributes, children, node } = props
+
+    switch (node.type) {
+      case 'block-quote':
+        return <blockquote {...attributes}>{children}</blockquote>
+      case 'bulleted-list':
+        return <ul {...attributes}>{children}</ul>
+      case 'heading-one':
+        return <h1 {...attributes}>{children}</h1>
+      case 'heading-two':
+        return <h2 {...attributes}>{children}</h2>
+      case 'list-item':
+        return <li {...attributes}>{children}</li>
+      case 'numbered-list':
+        return <ol {...attributes}>{children}</ol>
+      default:
+        return next()
+    }
+  }
+
+  // Render a Slate mark
+  renderMark = (props, editor, next) => {
+    const { children, mark, attributes } = props
+
+    switch (mark.type) {
+      case 'bold':
+        return <strong {...attributes}>{children}</strong>
+      case 'code':
+        return <code {...attributes}>{children}</code>
+      case 'italic':
+        return <em {...attributes}>{children}</em>
+      case 'underlined':
+        return <u {...attributes}>{children}</u>
+      default:
+        return next()
+    }
+  }
+
+  // On change, save the new `value`.
+  onChange = ({ value }) => {
+    this.setState({ value })
+  }
+
+  // On key down, if it's a formatting command toggle a mark.
+  onKeyDown = (event, editor, next) => {
+    let mark
+
+    if (isBoldHotkey(event)) {
+      mark = 'bold'
+    } else if (isItalicHotkey(event)) {
+      mark = 'italic'
+    } else if (isUnderlinedHotkey(event)) {
+      mark = 'underlined'
+    } else if (isCodeHotkey(event)) {
+      mark = 'code'
+    } else {
+      return next()
+    }
+
+    event.preventDefault()
+    editor.toggleMark(mark)
+  }
+
+  // When a mark button is clicked, toggle the current mark.
+  onClickMark = (event, type) => {
+    event.preventDefault()
+    this.editor.toggleMark(type)
+  }
+
+  // When a block button is clicked, toggle the block type.
+  onClickBlock = (event, type) => {
+    event.preventDefault()
+
+    const { editor } = this
+    const { value } = editor
+    const { document } = value
+
+    // Handle everything but list buttons.
+    if (type !== 'bulleted-list' && type !== 'numbered-list') {
+      const isActive = this.hasBlock(type)
+      const isList = this.hasBlock('list-item')
+
+      if (isList) {
+        editor
+          .setBlocks(isActive ? DEFAULT_NODE : type)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list')
+      } else {
+        editor.setBlocks(isActive ? DEFAULT_NODE : type)
+      }
+    } else {
+      // Handle the extra wrapping required for list buttons.
+      const isList = this.hasBlock('list-item')
+      const isType = value.blocks.some(block => {
+        return !!document.getClosest(block.key, parent => parent.type === type)
+      })
+
+      if (isList && isType) {
+        editor
+          .setBlocks(DEFAULT_NODE)
+          .unwrapBlock('bulleted-list')
+          .unwrapBlock('numbered-list')
+      } else if (isList) {
+        editor
+          .unwrapBlock(
+            type === 'bulleted-list' ? 'numbered-list' : 'bulleted-list'
+          )
+          .wrapBlock(type)
+      } else {
+        editor.setBlocks('list-item').wrapBlock(type)
+      }
+    }
+  }
 }
 
 export { SlateEditor };
