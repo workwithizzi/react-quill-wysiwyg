@@ -1,11 +1,11 @@
-import React from 'react'
-import { cx, css } from 'emotion'
+import React from "react";
+import { cx, css } from "emotion";
 
 
 
 // Editor Menu Button
 export const Button = React.forwardRef(
-  ({ className, active, reversed, icon, ...props }, ref) => (
+	({ className, active, reversed, icon, ...props }, ref) => (
 		<span
 			ref={ref}
 			className={cx(
@@ -13,8 +13,8 @@ export const Button = React.forwardRef(
 				css`
 					cursor: pointer;
 					color: ${reversed
-						? active ? 'white' : '#aaa'
-						: active ? 'black' : '#ccc'};
+			? active ? "white" : "#aaa"
+			: active ? "black" : "#ccc"};
 				`
 			)}
 		>
@@ -22,7 +22,7 @@ export const Button = React.forwardRef(
 			<span
 				{...props}
 				className={cx(
-					'material-icons',
+					"material-icons",
 					className,
 					css`
 						font-size: 18px;
@@ -31,33 +31,33 @@ export const Button = React.forwardRef(
 				)}
 			/>
 		</span>
-  )
-)
+	)
+);
 
 
 // Editor Toolbar
 export const Toolbar = React.forwardRef(({ className, ...props }, ref) => (
-  <div
-    {...props}
-    ref={ref}
-    className={cx(
+	<div
+		{...props}
+		ref={ref}
+		className={cx(
 			className,
 			css`
-        & > * {
-          display: inline-block;
-        }
+				& > * {
+					display: inline-block;
+				}
 
-        & > * + * {
-          margin-left: 15px;
-        }
-      `,
-      css`
-        position: relative;
-        padding: 1px 18px 17px;
-        margin: 0 -20px;
-        border-bottom: 2px solid #eee;
-        margin-bottom: 20px;
-      `
-    )}
-  />
-))
+				& > * + * {
+					margin-left: 15px;
+				}
+			`,
+			css`
+				position: relative;
+				padding: 1px 18px 17px;
+				margin: 0 -20px;
+				border-bottom: 2px solid #eee;
+				margin-bottom: 20px;
+			`
+		)}
+	/>
+));
